@@ -1,6 +1,6 @@
 # cpsc-471-api
 
-api was developed in ...\appserv\www\
+api was developed in ...\Appserv\www\
 
 For read:
 1. Set request to GET and input URL: http://localhost/api/"table-name"/read.php replace "table-name" with the name of the table.
