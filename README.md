@@ -68,9 +68,3 @@ http://localhost/api/item/delete.php
     "item_id": "4"
 }
 ```
-
-
-
-
-FOR SHOPPING_LIST
-SEARCH AND DELETE BY NAME
