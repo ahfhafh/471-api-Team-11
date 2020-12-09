@@ -1,7 +1,7 @@
 # cpsc-471-api
 
 For read:
-1. Set request to GET and input URL: http://localhost/api/item/read.php
+1. Set request to GET and input URL: http://localhost/api/"table-name"/read.php replace "table-name" with the name of the table
 
 For search:
 1. Set request to GET and input URL: http://localhost/api/item/search.php?item_id=1
