@@ -7,41 +7,39 @@ header("Access-Control-Allow-Headers: Access-Control-Allow-Headers, Content-Type
 
 // include database and object files
 include_once '../config/database.php';
-include_once '../objects/item.php';
+include_once '../objects/discount.php';
 
 // instantiate database
 $database = new Database();
 $db = $database->connect();
 
 // initialize object
-$item = new item($db);
+$discount = new discount($db);
 
 // get data
 $data = json_decode(file_get_contents("php://input"));
 
 if (
-    !empty($data->brand) &&
-    !empty($data->price) &&
-    !empty($data->description) &&
-    !empty($data->in_stock) &&
-    (!empty($data->type) || ($data->type == "0")) &&
-    !empty($data->section)
+    !empty($data->name) &&
+    !empty($data->owner) &&
+    !empty($data->date_end) &&
+    (!empty($data->store) || ($data->store == "0")) &&
+    (!empty($data->item_id) || ($data->item_id == "0"))
 ) {
-    $item->brand = $data->brand;
-    $item->price = $data->price;
-    $item->description = $data->description;
-    $item->type = $data->type;
-    $item->in_stock = $data->in_stock;
-    $item->section = $data->section;
+    $discount->name = $data->name;
+    $discount->store = $data->store;
+    $discount->owner = $data->owner;
+    $discount->item_id = $data->item_id;
+    $discount->date_end = $data->date_end;
 
-    // create item
-    if($item->create()) {
+    // create discount
+    if($discount->create()) {
         echo json_encode(
-            array("message" => "Item created")
+            array("message" => "Discount created")
         );
     } else {
         echo json_encode(
-            array("message" => "Item not created")
+            array("message" => "Discount not created")
         );
     }
 } else {
@@ -49,7 +47,7 @@ if (
     http_response_code(400);
   
     // incomplete data
-    echo json_encode(array("message" => "Unable to create item. Data is incomplete."));
+    echo json_encode(array("message" => "Unable to create discount. Data is incomplete."));
 }
 
 ?>

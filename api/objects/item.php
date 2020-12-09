@@ -38,7 +38,7 @@ class item{
     }
     
     // Get single item
-    public function read_single() {
+    public function search() {
         // select query
         $query = "SELECT
             *
@@ -48,7 +48,7 @@ class item{
             item_id = ?";
 
         // prepare query statement
-         $stmt = $this->conn->prepare($query);
+        $stmt = $this->conn->prepare($query);
 
         // bind ID
         $stmt->bindParam(1, $this->item_id);
@@ -70,8 +70,8 @@ class item{
 
     // create item
     public function create() {
-        // creat equery
-        $query = "INSERT INTO " . $this->table . "
+        // create query
+        $query = "INSERT INTO " . $this->table_name . "
             SET
                 brand = :brand,
                 price = :price,
@@ -98,6 +98,78 @@ class item{
         $stmt->bindParam(":in_stock", $this->in_stock);
         $stmt->bindParam(":type", $this->type);
         $stmt->bindParam(":section", $this->section);
+
+        // execute query
+        if($stmt->execute()) {
+            return true;
+        }
+        
+        // print error
+        printf("Error: %s.\n", $stmt->error);
+
+        return false;
+        
+    }
+
+    // update item
+    public function update() {
+        // create query
+        $query = "UPDATE " . $this->table_name . "
+            SET
+                brand = :brand,
+                price = :price,
+                description = :description,
+                in_stock = :in_stock,
+                type = :type,
+                section = :section
+            WHERE
+                item_id = :item_id";
+
+        // prepare statement
+        $stmt = $this->conn->prepare($query);
+
+        // clean data
+        $this->brand = htmlspecialchars(strip_tags($this->brand));
+        $this->price = htmlspecialchars(strip_tags($this->price));
+        $this->description = htmlspecialchars(strip_tags($this->description));
+        $this->in_stock = htmlspecialchars(strip_tags($this->in_stock));
+        $this->type = htmlspecialchars(strip_tags($this->type));
+        $this->section = htmlspecialchars(strip_tags($this->section));
+        $this->item_id = htmlspecialchars(strip_tags($this->item_id));
+
+        // bind data
+        $stmt->bindParam(":brand", $this->brand);
+        $stmt->bindParam(":price", $this->price);
+        $stmt->bindParam(":description", $this->description);
+        $stmt->bindParam(":in_stock", $this->in_stock);
+        $stmt->bindParam(":type", $this->type);
+        $stmt->bindParam(":section", $this->section);
+        $stmt->bindParam(":item_id", $this->item_id);
+
+        // execute query
+        if($stmt->execute()) {
+            return true;
+        }
+        
+        // print error
+        printf("Error: %s.\n", $stmt->error);
+
+        return false;
+    }
+
+    // delete item
+    public function delete() {
+        // create query
+        $query = "DELETE FROM " . $this->table_name . " WHERE item_id = :item_id";
+
+        // prepare statement
+        $stmt = $this->conn->prepare($query);
+
+        // clean data
+        $this->item_id = htmlspecialchars(strip_tags($this->item_id));
+
+        // bind data
+        $stmt->bindParam(":item_id", $this->item_id);
 
         // execute query
         if($stmt->execute()) {

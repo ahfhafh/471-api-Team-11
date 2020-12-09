@@ -5,48 +5,46 @@ header("Content-Type: application/json; charset=UTF-8");
   
 // include database and object files
 include_once '../config/database.php';
-include_once '../objects/item.php';
+include_once '../objects/promotion.php';
   
 // instantiate database
 $database = new Database();
 $db = $database->connect();
   
 // initialize object
-$item = new item($db);
+$promotion = new promotion($db);
   
 // query products
-$stmt = $item->read();
+$stmt = $promotion->read();
 $num = $stmt->rowCount();
   
 // check if record found
 if($num > 0){
   
     // products array
-    $items_arr=array();
-    $items_arr["data"]=array();
+    $promotions_arr=array();
+    $promotions_arr["data"]=array();
   
     // retrieve our table contents
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
         // extract row
         extract($row);
   
-        $item_item=array(
-            "item_id" => $item_id,
-            "type" => $type,
-            "description" => $description,
-            "price" => $price,
-            "in-stock" => $in_stock,
-            "brand" => $brand
+        $promotion_promotion=array(
+            "promotion_id" => $promotion_id,
+            "date" => $date,
+            "name" => $name,
+            "item" => $item,
         );
   
-        array_push($items_arr["data"], $item_item);
+        array_push($promotions_arr["data"], $promotion_promotion);
     }
   
     // set response code - 200 OK
     http_response_code(200);
   
     // show products data in json format
-    echo json_encode($items_arr);
+    echo json_encode($promotions_arr);
 }
   
 else{
@@ -56,6 +54,6 @@ else{
   
     // no products found
     echo json_encode(
-        array("message" => "No items found.")
+        array("message" => "No promotions found.")
     );
 }

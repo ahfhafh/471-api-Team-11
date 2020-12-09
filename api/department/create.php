@@ -7,41 +7,33 @@ header("Access-Control-Allow-Headers: Access-Control-Allow-Headers, Content-Type
 
 // include database and object files
 include_once '../config/database.php';
-include_once '../objects/item.php';
+include_once '../objects/department.php';
 
 // instantiate database
 $database = new Database();
 $db = $database->connect();
 
 // initialize object
-$item = new item($db);
+$department = new department($db);
 
 // get data
 $data = json_decode(file_get_contents("php://input"));
 
 if (
-    !empty($data->brand) &&
-    !empty($data->price) &&
-    !empty($data->description) &&
-    !empty($data->in_stock) &&
-    (!empty($data->type) || ($data->type == "0")) &&
-    !empty($data->section)
+    !empty($data->name) &&
+    (!empty($data->store) || ($data->store == "0"))
 ) {
-    $item->brand = $data->brand;
-    $item->price = $data->price;
-    $item->description = $data->description;
-    $item->type = $data->type;
-    $item->in_stock = $data->in_stock;
-    $item->section = $data->section;
+    $department->name = $data->name;
+    $department->store = $data->store;
 
-    // create item
-    if($item->create()) {
+    // create department
+    if($department->create()) {
         echo json_encode(
-            array("message" => "Item created")
+            array("message" => "Department created")
         );
     } else {
         echo json_encode(
-            array("message" => "Item not created")
+            array("message" => "Department not created")
         );
     }
 } else {
@@ -49,7 +41,7 @@ if (
     http_response_code(400);
   
     // incomplete data
-    echo json_encode(array("message" => "Unable to create item. Data is incomplete."));
+    echo json_encode(array("message" => "Unable to create department. Data is incomplete."));
 }
 
 ?>

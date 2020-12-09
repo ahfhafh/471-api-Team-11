@@ -1,8 +1,8 @@
 <?php
 // headers
 header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json");
-header("Access-Control-Allow-Methods: POST");
+header("Content-Type: application/json; charset=UTF-8");
+header("Access-Control-Allow-Methods: DELETE");
 header("Access-Control-Allow-Headers: Access-Control-Allow-Headers, Content-Type, Authorization, Access-Control-Allow-Methods, X-Requested-With");
 
 // include database and object files
@@ -19,29 +19,21 @@ $item = new item($db);
 // get data
 $data = json_decode(file_get_contents("php://input"));
 
-if (
-    !empty($data->brand) &&
-    !empty($data->price) &&
-    !empty($data->description) &&
-    !empty($data->in_stock) &&
-    (!empty($data->type) || ($data->type == "0")) &&
-    !empty($data->section)
-) {
-    $item->brand = $data->brand;
-    $item->price = $data->price;
-    $item->description = $data->description;
-    $item->type = $data->type;
-    $item->in_stock = $data->in_stock;
-    $item->section = $data->section;
 
-    // create item
-    if($item->create()) {
+if (
+    (!empty($data->item_id) || ($data->item_id == "0"))
+) {
+    // set item_id
+    $item->item_id = $data->item_id;
+
+    // delete item
+    if($item->delete()) {
         echo json_encode(
-            array("message" => "Item created")
+            array("message" => "Item deleted")
         );
     } else {
         echo json_encode(
-            array("message" => "Item not created")
+            array("message" => "Item not deleted")
         );
     }
 } else {
@@ -49,7 +41,7 @@ if (
     http_response_code(400);
   
     // incomplete data
-    echo json_encode(array("message" => "Unable to create item. Data is incomplete."));
+    echo json_encode(array("message" => "Unable to delete item. Data is incomplete."));
 }
 
 ?>
