@@ -4,7 +4,8 @@ For read:
 1. Set request to GET and input URL: http://localhost/api/"table-name"/read.php replace "table-name" with the name of the table
 
 For search:
-1. Set request to GET and input URL: http://localhost/api/item/search.php?item_id=1
+1. Set request to GET and input URL: http://localhost/api/"table-name"/search.php?"attribute"="3" replace "table-name" with the name of the table and "attribute" with
+the primary key attribute searched by and "#" with the desired indexed number
 
 For create:
 1. Set request to POST and input URL: http://localhost/api/item/create.php
