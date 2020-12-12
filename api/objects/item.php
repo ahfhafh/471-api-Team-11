@@ -18,6 +18,37 @@ class item{
     public function __construct($db){
         $this->conn = $db;
     }
+
+    // get cheapest item
+	public function find_lowest(){
+
+		// select query
+		$query = "SELECT *
+                FROM
+                    " . $this->table_name . "
+                WHERE
+                    price = (SELECT MIN(price)
+                            FROM " . $this->table_name .")";
+  
+        // prepare query statement
+        $stmt = $this->conn->prepare($query);
+  
+        // execute query
+        $stmt->execute();
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // set properties
+        $this->item_id = $row['item_id'];
+        $this->brand = $row['brand'];
+        $this->price = $row['price'];
+        $this->description = $row['description'];
+        $this->in_stock= $row['in_stock'];
+        $this->type = $row['type'];
+        $this->section = $row['section'];
+  
+        return $stmt;
+    }
 	
 	// read items
 	public function read(){
@@ -39,6 +70,7 @@ class item{
     
     // Get single item
     public function search() {
+        
         // select query
         $query = "SELECT
             *
