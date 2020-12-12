@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 09, 2020 at 04:39 AM
+-- Generation Time: Dec 12, 2020 at 12:04 AM
 -- Server version: 8.0.17
 -- PHP Version: 7.3.10
 
@@ -80,7 +80,8 @@ CREATE TABLE `department` (
 
 INSERT INTO `department` (`department_id`, `name`, `store`) VALUES
 (1, 'Department 3', 1),
-(2, 'Not a department', 1);
+(2, 'Not a department', 1),
+(4, 'Department 3', 2);
 
 -- --------------------------------------------------------
 
@@ -149,7 +150,10 @@ CREATE TABLE `item` (
 INSERT INTO `item` (`item_id`, `brand`, `price`, `description`, `in_stock`, `type`, `section`) VALUES
 (1, 'Nestle', 12.99, 'coffee', 'Y', 1, 'Beverages'),
 (2, 'Lays', 5.99, 'chips', 'Y', 1, 'Beverages'),
-(3, 'Pepsi', 2.98, 'not coke', 'Y', 1, 'Beverages');
+(3, 'Pepsi', 2.98, 'not coke', 'Y', 1, 'Beverages'),
+(4, 'Coca-cola', 2.99, 'coke', 'Y', 1, 'Beverages'),
+(5, 'Coca-cola', 2.98, 'coke', 'Y', 4, 'Beverages'),
+(6, 'Coca-cola', 5, 'coke', 'Y', 4, 'Beverages');
 
 -- --------------------------------------------------------
 
@@ -222,18 +226,39 @@ INSERT INTO `shopper` (`username`, `lists`, `shopper_email`) VALUES
 
 CREATE TABLE `shopping_list` (
   `list_id` int(11) NOT NULL,
-  `item_id` int(11) NOT NULL,
-  `name` varchar(45) NOT NULL
+  `name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `shopping_list`
 --
 
-INSERT INTO `shopping_list` (`list_id`, `item_id`, `name`) VALUES
-(1, 1, 'The list'),
-(2, 1, 'List 2'),
-(3, 1, 'General List');
+INSERT INTO `shopping_list` (`list_id`, `name`) VALUES
+(1, 'The list'),
+(2, 'List 2'),
+(3, 'General List');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `shopping_list_items`
+--
+
+CREATE TABLE `shopping_list_items` (
+  `id` int(11) NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `list_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `shopping_list_items`
+--
+
+INSERT INTO `shopping_list_items` (`id`, `item_id`, `list_id`) VALUES
+(1, 2, 1),
+(2, 1, 1),
+(3, 5, 1),
+(4, 5, 1);
 
 -- --------------------------------------------------------
 
@@ -376,8 +401,15 @@ ALTER TABLE `shopper`
 -- Indexes for table `shopping_list`
 --
 ALTER TABLE `shopping_list`
-  ADD PRIMARY KEY (`list_id`),
-  ADD KEY `item_id` (`item_id`);
+  ADD PRIMARY KEY (`list_id`);
+
+--
+-- Indexes for table `shopping_list_items`
+--
+ALTER TABLE `shopping_list_items`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `item_id` (`item_id`),
+  ADD KEY `list_id` (`list_id`);
 
 --
 -- Indexes for table `store`
@@ -419,7 +451,7 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `department`
 --
 ALTER TABLE `department`
-  MODIFY `department_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `department_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `discount`
@@ -437,7 +469,7 @@ ALTER TABLE `inventory`
 -- AUTO_INCREMENT for table `item`
 --
 ALTER TABLE `item`
-  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `promotion`
@@ -449,7 +481,13 @@ ALTER TABLE `promotion`
 -- AUTO_INCREMENT for table `shopping_list`
 --
 ALTER TABLE `shopping_list`
-  MODIFY `list_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `list_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `shopping_list_items`
+--
+ALTER TABLE `shopping_list_items`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `store`
@@ -471,67 +509,68 @@ ALTER TABLE `updates`
 -- Constraints for table `accesses`
 --
 ALTER TABLE `accesses`
-  ADD CONSTRAINT `admin_id_fk` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`admin_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `item_id_fk` FOREIGN KEY (`item_obtained`) REFERENCES `item` (`item_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `store_id_fk` FOREIGN KEY (`store_id`) REFERENCES `store` (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `admin_id_fk` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`admin_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `item_id_fk` FOREIGN KEY (`item_obtained`) REFERENCES `item` (`item_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `store_id_fk` FOREIGN KEY (`store_id`) REFERENCES `store` (`store_id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Constraints for table `admin`
 --
 ALTER TABLE `admin`
-  ADD CONSTRAINT `admin_email_fk` FOREIGN KEY (`email`) REFERENCES `user` (`email`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `admin_email_fk` FOREIGN KEY (`email`) REFERENCES `user` (`email`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Constraints for table `department`
 --
 ALTER TABLE `department`
-  ADD CONSTRAINT `store_fk` FOREIGN KEY (`store`) REFERENCES `store` (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `store_fk` FOREIGN KEY (`store`) REFERENCES `store` (`store_id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Constraints for table `discount`
 --
 ALTER TABLE `discount`
-  ADD CONSTRAINT `discount_item_id_fk` FOREIGN KEY (`item_id`) REFERENCES `item` (`item_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `discount_owner_fk` FOREIGN KEY (`owner`) REFERENCES `shopper` (`username`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `discount_store_fk` FOREIGN KEY (`store`) REFERENCES `store` (`store_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `discount_item_id_fk` FOREIGN KEY (`item_id`) REFERENCES `item` (`item_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `discount_owner_fk` FOREIGN KEY (`owner`) REFERENCES `shopper` (`username`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `discount_store_fk` FOREIGN KEY (`store`) REFERENCES `store` (`store_id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Constraints for table `inventory`
 --
 ALTER TABLE `inventory`
-  ADD CONSTRAINT `item_id_inv_fk` FOREIGN KEY (`item_id`) REFERENCES `updates` (`item_added`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `item_id_inv_fk` FOREIGN KEY (`item_id`) REFERENCES `updates` (`item_added`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Constraints for table `item`
 --
 ALTER TABLE `item`
-  ADD CONSTRAINT `section_fk` FOREIGN KEY (`section`) REFERENCES `section` (`name`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `type_fk` FOREIGN KEY (`type`) REFERENCES `department` (`department_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `section_fk` FOREIGN KEY (`section`) REFERENCES `section` (`name`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `type_fk` FOREIGN KEY (`type`) REFERENCES `department` (`department_id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Constraints for table `promotion`
 --
 ALTER TABLE `promotion`
-  ADD CONSTRAINT `item_fk` FOREIGN KEY (`item`) REFERENCES `item` (`item_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `item_fk` FOREIGN KEY (`item`) REFERENCES `item` (`item_id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Constraints for table `section`
 --
 ALTER TABLE `section`
-  ADD CONSTRAINT `inventory_section_fk` FOREIGN KEY (`inventory`) REFERENCES `inventory` (`inventory_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `inventory_section_fk` FOREIGN KEY (`inventory`) REFERENCES `inventory` (`inventory_id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
--- Constraints for table `shopping_list`
+-- Constraints for table `shopping_list_items`
 --
-ALTER TABLE `shopping_list`
-  ADD CONSTRAINT `item_id_shopping_list_fk` FOREIGN KEY (`item_id`) REFERENCES `item` (`item_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `shopping_list_items`
+  ADD CONSTRAINT `sli_item_fk` FOREIGN KEY (`item_id`) REFERENCES `item` (`item_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `sli_list_fk` FOREIGN KEY (`list_id`) REFERENCES `shopping_list` (`list_id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Constraints for table `updates`
 --
 ALTER TABLE `updates`
-  ADD CONSTRAINT `admin_id_update_fk` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`admin_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `inventory_fk` FOREIGN KEY (`inventory`) REFERENCES `inventory` (`inventory_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `admin_id_update_fk` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`admin_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `inventory_fk` FOREIGN KEY (`inventory`) REFERENCES `inventory` (`inventory_id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
